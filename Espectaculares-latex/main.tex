@@ -1,0 +1,61 @@
+\documentclass[a4paper]{article}
+
+\input{src/00.0-includes} % Incluye archivo de paquetes
+
+%Inicia configuración de encabezado y pie de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize ESCOM} %encabezado izquierda
+\fancyhead[R]{\footnotesize IPN}   % dereecha
+\fancyfoot[R]{\footnotesize Documento de Análisis}  % Pie derecha
+\fancyfoot[C]{\thepage}  % centro
+\fancyfoot[L]{\footnotesize ADOO}  %izquierda
+\renewcommand{\footrulewidth}{0.4pt}
+%Termina configuración de encabezado y pie de página
+
+\title{Espectaculares - Proyecto}
+\author{}
+\date{\today}
+
+\begin{document}
+
+	\include{src/00.1-portada} % Portada
+	\tableofcontents % Índice
+	\newpage
+
+	\input{src/01-introduccion}
+	\input{src/02-glosario}
+	\section{Análisis del problema} % 03-análisis
+		\subsection{Objetivos}	% 03.1-Objetivos
+			\input{src/03.1.1-objetivoGeneral}
+			\input{src/03.1.2-objetivosEspecificos}
+		
+		\subsection{Problemática} % 03.2-problemática
+			\input{src/03.2.1-problematicaGeneral}
+			\input{src/03.2.2-problemasEspecificos}
+			\input{src/03.2.3-causas}
+			\input{src/03.2.4-consecuencias}
+
+		\subsection{Propuestas de Solución} % 03.3-propuestasDeSolución
+			\input{src/03.3.1-descripcionProducto}
+			\input{src/03.3.2-plataforma}
+			\input{src/03.3.3-requerimientosUsuario}
+			\input{src/03.3.4-requerimientosFuncionales}
+			\input{src/03.3.5-interaccionUsuario}	
+			\input{src/03.3.6-consideracionesNegocio}
+			\input{src/03.3.7-propiedadesSistema}
+
+
+	\section{Modelo del negocio}
+		\subsection{}
+	\section{Modelo de Casos de uso}
+		\subsection{Identificación de casos de uso}
+		\subsection{Caso de uso 1}
+		\subsection{Caso de uso(hasta el N)}
+	\section{Modelos de Interacción}
+		\subsection{Entorno de trabajo}
+		\subsection{Entorno de trabajo}
+		\subsection{Mapa de navegación}
+		\subsection{IU1 (Imagenes, interface de usuario)}
+
+\end{document}
