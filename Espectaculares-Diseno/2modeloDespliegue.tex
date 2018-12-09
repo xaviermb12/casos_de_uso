@@ -1,0 +1,221 @@
+%=========================================================
+\chapter{Modelo de Despliegue}
+\label{cap:despliegue}
+
+Este capítulo contiene las instrucciones de instalación de dependencias del proyecto, tanto para el proyecto en Desarrollo como la resolución de dependencias en Producción.
+
+Contiene también los Lineamientos / Buenas Prácticas de Diseño, las cuáles describen la forma en que se escribe el código y cómo se manejan la excepciones en caso de ocurrir un error. \\
+
+%---------------------------------------------------------
+\section{Entorno de Producción}
+
+Requisito importante para Desarrollo y Produccion: Tener/rentar un servidor con S.O. Fedora y permisos de Root. NOTA: La forma de instalación de Desarrollo y Produccion es prácticamente la misma, exceptuando por el manejador de Bases de Datos \\
+
+\subsection{Instalar Apache en el Servidor}
+\begin{enumerate}
+    \item Para instalar Apache, se actualiza e instala usando dnf.
+    \begin{lstlisting} 
+    # sudo dnf install httpd
+    \end{lstlisting}
+    \item Habilitar el servicio httpd e iniciar Apache.
+    \begin{lstlisting} 
+    # sudo systemctl enable httpd.service
+    # sudo systemctl start httpd.service
+    \end{lstlisting}
+    \item Comprobar la versión de Apache
+    \begin{lstlisting}
+    # httpd -v
+    \end{lstlisting}
+    \item Instalar y activar el firewall
+    \begin{lstlisting}
+    # sudo dnf install firewalld -y
+    # sudo systemctl start firewalld
+    # sudo systemctl enable firewalld
+    \end{lstlisting}
+    \item Habilitar el acceso a http o https a través del cortafuegos del sistema
+    \begin{lstlisting}
+    # sudo firewall-cmd --add-service={http,https} --permanent
+    # sudo firewall-cmd --reload
+    \end{lstlisting}
+    \item Comprobar el estado del servicio httpd
+    \begin{lstlisting}
+    # sudo systemctl status httpd.service
+    \end{lstlisting}
+    \item Probar el servidor web Apache yendo en el navegador a: http://Apache-Server-IP
+\end{enumerate}
+
+\subsection{Instalar SQL Server}
+\begin{enumerate}
+    \item Descargar el archivo de Configuración del Repositorio de Microsoft
+    \begin{lstlisting}
+    # sudo curl -o /etc/yum.repos.d/mssql-server.repo \
+        https://packages.microsoft.com/config/rhel/7/mssql-server-2017.repo
+    \end{lstlisting}
+    \item Instalar SQL Server 
+    \begin{lstlisting}
+    # sudo yum install -y mssql-server
+    \end{lstlisting}
+    \item Correr el siguiente comando y seguir los pasos para terminar la configuración
+    \begin{lstlisting}
+    # sudo /opt/mssql/bin/mssql-conf setup
+    \end{lstlisting}
+    \item Verificar que el servicio esté corriendo
+    \begin{lstlisting}
+    # systemctl status mssql-server
+    \end{lstlisting}
+    \item Permitir conexiones remotas a través del Firewall
+    \begin{lstlisting}
+    # sudo firewall-cmd --zone=public --add-port=1433/tcp --permanent
+    # sudo firewall-cmd --reload
+    \end{lstlisting}
+\end{enumerate}
+
+\subsection{Instalar PHP}
+\begin{enumerate}
+    \item Instalar PHP
+    \begin{lstlisting}
+    # sudo dnf install php php-common
+    \end{lstlisting}
+    \item Instalar algunos módulos usados comúnmente con PHP y reiniciamos Apache para que los cambios surtan efecto
+    \begin{lstlisting}
+    # sudo dnf install php php-common php-mysqlnd php-gd php-imap php-xml 
+        php-cli php-opcache php-mbstring
+    # systemctl restart httpd
+    \end{lstlisting}
+    \item Comprobamos la versión de PHP
+    \begin{lstlisting}
+    # php -v
+    \end{lstlisting}
+\end{enumerate}
+
+%---------------------------------------------------------
+\section{Entorno de Desarrollo}
+
+Requisito importante: Tener un servidor con S.O. Fedora instalado y permisos de Root. \\
+
+\subsection{Instalar Apache en el Servidor}
+\begin{enumerate}
+    \item Para instalar Apache, se actualiza e instala usando dnf.
+    \begin{lstlisting} 
+    # sudo dnf install httpd
+    \end{lstlisting}
+    \item Habilitar el servicio httpd e iniciar Apache.
+    \begin{lstlisting} 
+    # sudo systemctl enable httpd.service
+    # sudo systemctl start httpd.service
+    \end{lstlisting}
+    \item Comprobar la versión de Apache
+    \begin{lstlisting}
+    # httpd -v
+    \end{lstlisting}
+    \item Instalar y activar el firewall
+    \begin{lstlisting}
+    # sudo dnf install firewalld -y
+    # sudo systemctl start firewalld
+    # sudo systemctl enable firewalld
+    \end{lstlisting}
+    \item Habilitar el acceso a http o https a través del cortafuegos del sistema
+    \begin{lstlisting}
+    # sudo firewall-cmd --add-service={http,https} --permanent
+    # sudo firewall-cmd --reload
+    \end{lstlisting}
+    \item Comprobar el estado del servicio httpd
+    \begin{lstlisting}
+    # sudo systemctl status httpd.service
+    \end{lstlisting}
+    \item Probar el servidor web Apache yendo en el navegador a: http://Apache-Server-IP
+\end{enumerate}
+
+\subsection{Instalar MariaDB}
+\begin{enumerate}
+    \item Instalar la ultima version de MariaDB con el siguiente comando
+    \begin{lstlisting}
+    # sudo dnf install mariadb-server
+    \end{lstlisting}
+    \item Checar la version de instalación de MariaDB
+    \begin{lstlisting}
+    # mysql -V
+    \end{lstlisting}
+    \item Iniciar / habilitar el servicio mariaDB y comprobar su estado.
+    \begin{lstlisting}
+    # sudo systemctl start mariadb.service
+    # sudo systemctl enable mariadb.service
+    # sudo systemctl status mariadb.service
+    \end{lstlisting}
+\end{enumerate}
+
+\subsection{Instalar PHP}
+\begin{enumerate}
+    \item Instalar PHP
+    \begin{lstlisting}
+    # sudo dnf install php php-common
+    \end{lstlisting}
+    \item Instalar algunos módulos usados comúnmente con PHP y reiniciamos Apache para que los cambios surtan efecto
+    \begin{lstlisting}
+    # sudo dnf install php php-common php-mysqlnd php-gd php-imap php-xml 
+        php-cli php-opcache php-mbstring
+    # systemctl restart httpd
+    \end{lstlisting}
+    \item Comprobamos la versión de PHP
+    \begin{lstlisting}
+    # php -v
+    \end{lstlisting}
+\end{enumerate}
+
+\section{Lineamientos de Diseño}
+
+\cdtInstrucciones{
+    Cómo se deberá escribir cada parte del código(reglas). Cómo se manejaran las Excepciones(reglas generales, descripción de la excepciones)
+}
+
+En esta sección describiremos las buenas prácticas de programación a seguir durante el proyecto, y que por ser nuestro estándar deberán contener todos los archivos de código en él contenidos. \\
+Previniendo también los fallos del sistema, se describirán los posibles errores/excepciones y la forma en la cual los manejaremos. \\
+
+\subsection{Escritura del Código}
+	\subsubsection{General}
+		.\\
+		\textit{Regla 1.-} El código debe estar correctamente indentado para facilitar su lectura. \\
+		\textit{Regla 2.-} Los nombres(tanto de métodos como de variables) deben describir para lo que siven, para facilitar de nuevo la lectura del código y que otro desarrollador pueda continuar con la construcción de otro módulo sin problemas. \\
+		\textit{Regla 3.-} Debe reducirse cuanto sea posible el uso de variables globales(Con una excepción, que mencionaremos más adelante), con el objetivo de hacer los módulos independientes y menos susceptibles a los errores. \\
+		\textit{Regla 4.-} Los archivos se modularizarán, procurando que cada uno no tenga más de 300 líneas de código, de nuevo, para facilitar su lectura y modificación. \\
+		\textit{Regla 5.-} Todo lo que tenga que ver con envío a frontend se minificará en producción, para disminuir el peso del archivo y aumentar la velocidad de carga, así como desaparecer comentarios para evitar fugas de información que no debería ser visible para los usuarios finales. \\
+		\textit{Regla 6.-}  Se usarán variables para indicar que alguien es desarrollador, y así facilitar las pruebas del sistema. Todo lo que tenga que ver con testing desaparecerá si dichas variables no están activas, y se limitará su uso en producción.
+
+	\subsubsection{PHP}
+	.\\
+	\textit{Regla 1.-} No está permitido imprimir variables con PHP dentro del HTML, al estilo
+	\begin{lstlisting}
+	<input type="text" value="<?php echo 'variable desde php';?>">
+	\end{lstlisting}
+	Debido a que le quita legibilidad al código y, hace la aplicación menos escalable. \\
+	\textit{Regla 2.-} Se marcará claramente la funcionalidad y uso de los archivos en API vs los archivos de la vista. \\
+	\textit{Regla 3.-} Los archivos PHP que contengan HTML se deberán modularizar de forma que se puedan mandar llamar desde otras vistas sin problemas. \\
+	\textit{Regla 4.-} Debido a que al hacer varias inclusiones de archivos en sub-archivos consecutivamente, si están en direcciones diferentes da problemas, se crearán funciones para poder incluir archivos desde la raíz del proyecto, o el punto desde donde queramos incluir, apoyándonos en la variable \$\_SERVER['SERVER\_ADDR'], que contiene la raíz del servidor.
+		
+	\subsubsection{JavaScript}
+	.\\
+	\textit{Regla 1.-} Para evitar cuellos de botella al hacer peticiones, haremos uso de las promesas y el estándar Fetch, usado en las últimas versiones de ECMAscript. \\
+
+	\subsubsection{CSS}
+	Aunque varias de las siguientes reglas no son posibles con CSS normal, con el uso de SCSS se nos abren varias posibilidades, como:\\
+	\textit{Regla 1.-} El uso de variables globales de CSS para permitir hacer un cambio de colores generales cambiando sólo la variable y no tener que modificar todos los lugares donde aparecen. \\
+	\textit{Regla 2.-} Aunque los estilos sean generales, se modularizarán los archivos fuente, donde cada uno afectará la parte de la pantalla a la que le toque afectar. \\
+	\textit{Regla 3.-} Se evitará en lo posible el anidamiento de componentes en CSS, para evitar la dependencia de sus padres, por lo que se fomentará el uso de clases para reutilizar las mismas.
+	
+	
+\subsection{Excepciones}
+	\subsubsection{Descripción de Excepciones}
+	%   Solo son ideas, no es el completo
+	.\\
+	\textit{Excepcion 1.-No\_Encontrado. } Excepción lanzada en caso de que el usuario solicite un recurso inexistente en nuestro servidor. \\  
+	\textit{Excepcion 2.-Sin\_Permisos} Excepción que se lanzará cuando alguie con acceso al sistema solicite via URL un recurso al que no tenga permiso para acceder. \\
+	\textit{Excepcion 3.-Consulta\_Vacía} Excepción que se lanzará cuando una consulta no tenga ningún resultado coincidente. \\
+	\textit{Excepcion 2.-No\_JSON} Excepción que se lanzará al intentar convertir un json, cuando la petición recibida no tenga dicho formato. \\
+	\textit{Excepcion 2.-No\_Objeto} Excepción lanzada cuando se espere un objeto y se reciba otra cosa. \\
+	\textit{Excepcion 2.-Variable\_Inexistente} Excepción lanzada cuando una variable no exista o no esté seteada. \\
+	\textit{Excepcion 2.-Variable\_Nula} Excepción lanzada cuando se requieran hacer operaciones con una variable y ésta tenga valor nulo. \\
+	\textit{Excepcion 2.-Accion\_Inexistente} Excepción lanzada cuando la acción que estemos intentando llamar no exista. \\
+	\textit{Excepcion 2.-Extension\_No\_Aceptada} Excepción lanzada cuando se intente subir un archivo con una extensión que no aceptamos. \\
+	\textit{Excepcion 2.-Extension\_Falsa} Excepción lanzada cuando se intente subir un archivo con cierta extensión, pero que sus headers contengan otro tipo de archivo. \\
+    
+%    \subsubsection{Manejo de Excepciones}
